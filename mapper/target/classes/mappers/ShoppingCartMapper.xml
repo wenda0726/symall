@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sjtu.symall.dao.ShoppingCartMapper">
+  <resultMap id="BaseResultMap" type="com.sjtu.symall.entity.ShoppingCart">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="cart_id" jdbcType="INTEGER" property="cartId" />
+    <result column="product_id" jdbcType="VARCHAR" property="productId" />
+    <result column="sku_id" jdbcType="VARCHAR" property="skuId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="cart_num" jdbcType="VARCHAR" property="cartNum" />
+    <result column="cart_time" jdbcType="VARCHAR" property="cartTime" />
+    <result column="product_price" jdbcType="DECIMAL" property="productPrice" />
+    <result column="sku_props" jdbcType="VARCHAR" property="skuProps" />
+  </resultMap>
+    <resultMap id="ShoppingCartVO" type="com.sjtu.symall.entity.ShoppingCartVO">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="cart_id" jdbcType="INTEGER" property="cartId"/>
+        <result column="product_id" jdbcType="VARCHAR" property="productId"/>
+        <result column="sku_id" jdbcType="VARCHAR" property="skuId"/>
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="cart_num" jdbcType="VARCHAR" property="cartNum"/>
+        <result column="cart_time" jdbcType="VARCHAR" property="cartTime"/>
+        <result column="product_price" jdbcType="DECIMAL" property="productPrice"/>
+        <result column="sku_props" jdbcType="VARCHAR" property="skuProps"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="url" jdbcType="VARCHAR" property="productImg"/>
+        <result column="original_price" jdbcType="INTEGER" property="originalPrice"/>
+        <result column="sell_price" jdbcType="INTEGER" property="sellPrice"/>
+        <result column="stock" jdbcType="INTEGER" property="skuStock"/>
+        <result column="sku_name" jdbcType="VARCHAR" property="skuName"/>
+    </resultMap>
+
+    <select id="selectShoppingCartByUserId" resultMap="ShoppingCartVO">
+        SELECT c.cart_id,
+               c.product_id,
+               c.sku_id,
+               c.user_id,
+               c.cart_id,
+               c.cart_num,
+               c.product_price,
+               c.sku_props,
+               p.`product_name`,
+               i.`url`,
+               s.original_price,
+               s.sell_price,
+               s.stock,
+               s.sku_name
+        FROM symall.`shopping_cart` c
+                 INNER JOIN symall.`product` p
+                 INNER JOIN symall.`product_img` i
+                 INNER JOIN symall.product_sku s
+                            ON c.`product_id` = p.`product_id` AND i.`item_id` = c.`product_id`
+                                AND s.sku_id = c.sku_id
+        WHERE c.`user_id` = #{userId}
+          AND i.`is_main` = 1;
+    </select>
+
+    <update id="updateCartNumByCartId" >
+        update symall.shopping_cart c
+        set c.cart_num = #{cartNum}
+        where  c.cart_id = #{cartId}
+    </update>
+
+    <select id="selectShoppingCartByCids" resultMap="ShoppingCartVO">
+        SELECT c.cart_id,
+        c.product_id,
+        c.sku_id,
+        c.user_id,
+        c.cart_id,
+        c.cart_num,
+        c.product_price,
+        c.sku_props,
+        p.`product_name`,
+        i.`url`,
+        s.original_price,
+        s.sell_price,
+        s.stock,
+        s.sku_name
+        FROM symall.`shopping_cart` c
+        INNER JOIN symall.`product` p
+        INNER JOIN symall.`product_img` i
+        INNER JOIN symall.product_sku s
+        ON c.`product_id` = p.`product_id` AND i.`item_id` = c.`product_id`
+        AND s.sku_id = c.sku_id
+        WHERE i.`is_main` = 1 AND c.cart_id in
+        <foreach collection="cids" item="cid" separator="," open="(" close=")">
+            #{cid}
+        </foreach>
+    </select>
+</mapper>

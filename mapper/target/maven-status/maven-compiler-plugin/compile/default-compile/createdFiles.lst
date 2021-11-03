@@ -1,0 +1,14 @@
+com\sjtu\symall\dao\CategoryMapper.class
+com\sjtu\symall\dao\ProductSkuMapper.class
+com\sjtu\symall\dao\UsersMapper.class
+com\sjtu\symall\dao\UserLoginHistoryMapper.class
+com\sjtu\symall\dao\ProductMapper.class
+com\sjtu\symall\general\GeneralDao.class
+com\sjtu\symall\dao\OrderItemMapper.class
+com\sjtu\symall\dao\ShoppingCartMapper.class
+com\sjtu\symall\dao\ProductCommentsMapper.class
+com\sjtu\symall\dao\ProductImgMapper.class
+com\sjtu\symall\dao\UserAddrMapper.class
+com\sjtu\symall\dao\IndexImgMapper.class
+com\sjtu\symall\dao\OrdersMapper.class
+com\sjtu\symall\dao\ProductParamsMapper.class

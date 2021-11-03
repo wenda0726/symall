@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sjtu.symall.dao.ProductMapper">
+  <resultMap id="BaseResultMap" type="com.sjtu.symall.entity.Product">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="product_id" jdbcType="VARCHAR" property="productId" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="category_id" jdbcType="INTEGER" property="categoryId" />
+    <result column="root_category_id" jdbcType="INTEGER" property="rootCategoryId" />
+    <result column="sold_num" jdbcType="INTEGER" property="soldNum" />
+    <result column="product_status" jdbcType="INTEGER" property="productStatus" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+
+  <resultMap id="ProductVO" type="com.sjtu.symall.entity.ProductVO">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="product_id" jdbcType="VARCHAR" property="productId" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="category_id" jdbcType="INTEGER" property="categoryId" />
+    <result column="root_category_id" jdbcType="INTEGER" property="rootCategoryId" />
+    <result column="sold_num" jdbcType="INTEGER" property="soldNum" />
+    <result column="product_status" jdbcType="INTEGER" property="productStatus" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+    <collection property="imgs" select="com.sjtu.symall.dao.ProductImgMapper.selectProductImgByProductId"
+                column="product_id"></collection>
+  </resultMap>
+
+  <select id="selectRecommendProducts" resultMap="ProductVO">
+        select product_id,
+               product_name,
+               category_id,
+               root_category_id,
+               sold_num,
+               product_status,
+               create_time,
+               update_time,
+               content
+        from symall.product
+        order by create_time desc
+        limit 0,3
+  </select>
+
+    <select id="selectProductByCategoryTop6" resultMap="ProductVO">
+        select product_id,
+               product_name,
+               category_id,
+               root_category_id,
+               sold_num,
+               product_status,
+               create_time,
+               update_time,
+               content
+        from symall.product
+        where root_category_id = #{cid}
+        order by sold_num
+        desc
+        limit 0,6
+    </select>
+
+    <resultMap id="ProductVOMap" type="com.sjtu.symall.entity.ProductVO">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="product_id" jdbcType="VARCHAR" property="productId" />
+        <result column="product_name" jdbcType="VARCHAR" property="productName" />
+        <result column="category_id" jdbcType="INTEGER" property="categoryId" />
+        <result column="root_category_id" jdbcType="INTEGER" property="rootCategoryId" />
+        <result column="sold_num" jdbcType="INTEGER" property="soldNum" />
+        <result column="product_status" jdbcType="INTEGER" property="productStatus" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="content" jdbcType="LONGVARCHAR" property="content" />
+        <collection property="skus" select="com.sjtu.symall.dao.ProductSkuMapper.selectLowestPriceSku"
+                    column="product_id"></collection>
+    </resultMap>
+    <select id="selectProductVOByCategory" resultMap="ProductVOMap">
+        select product_id,
+               product_name,
+               category_id,
+               root_category_id,
+               sold_num,
+               product_status,
+               create_time,
+               update_time,
+               content
+        from symall.product
+        where category_id = #{cid}
+        limit #{start},#{limit}
+    </select>
+
+    <select id="selectProductBrandByCategoryId" resultSets="java.util.List" resultType="string">
+        SELECT DISTINCT par.`brand`
+        FROM symall.product_params par
+        WHERE par.`product_id` IN
+              (SELECT p.`product_id` FROM symall.product p WHERE p.`category_id` = #{cid})
+    </select>
+
+    <select id="selectProductVOByCategoryIdAndBrand" resultMap="ProductVOMap">
+        select p.product_id,
+               p.product_name,
+               p.category_id,
+               p.root_category_id,
+               p.sold_num,
+               p.product_status,
+               p.create_time,
+               p.update_time,
+               p.content
+        from symall.product p
+        inner join symall.product_params par
+        on par.product_id = p.product_id
+        where p.category_id = #{cid}
+        and par.brand = #{brand}
+    </select>
+
+    <select id="selectProductByKeyword" resultMap="ProductVOMap">
+        select product_id,
+               product_name,
+               category_id,
+               root_category_id,
+               sold_num,
+               product_status,
+               create_time,
+               update_time,
+               content
+        from symall.product
+        where product_name like #{kw}
+        limit #{start},#{limit}
+    </select>
+
+    <select id="selectBrandByKeyword" resultSets="java.util.List" resultType="string">
+        SELECT DISTINCT par.`brand`
+        FROM symall.`product_params` par
+        WHERE par.`product_id` IN (
+            SELECT p.`product_id`
+            FROM symall.`product` p
+            WHERE p.`product_name` LIKE #{kw}
+        )
+    </select>
+</mapper>

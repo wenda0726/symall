@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sjtu.symall.dao.CategoryMapper">
+    <resultMap id="BaseResultMap" type="com.sjtu.symall.entity.Category">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="category_id" jdbcType="INTEGER" property="categoryId"/>
+        <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="category_level" jdbcType="INTEGER" property="categoryLevel"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="category_icon" jdbcType="VARCHAR" property="categoryIcon"/>
+        <result column="category_slogan" jdbcType="VARCHAR" property="categorySlogan"/>
+        <result column="category_pic" jdbcType="VARCHAR" property="categoryPic"/>
+        <result column="category_bg_color" jdbcType="VARCHAR" property="categoryBgColor"/>
+    </resultMap>
+
+    <resultMap id="CategoryVO" type="com.sjtu.symall.entity.CategoryVO">
+        <id column="category_id1" jdbcType="INTEGER" property="categoryId"/>
+        <result column="category_name1" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="category_level1" jdbcType="INTEGER" property="categoryLevel"/>
+        <result column="parent_id1" jdbcType="INTEGER" property="parentId"/>
+        <result column="category_icon1" jdbcType="VARCHAR" property="categoryIcon"/>
+        <result column="category_slogan1" jdbcType="VARCHAR" property="categorySlogan"/>
+        <result column="category_pic1" jdbcType="VARCHAR" property="categoryPic"/>
+        <result column="category_bg_color1" jdbcType="VARCHAR" property="categoryBgColor"/>
+        <collection property="categoryVOS" ofType="com.sjtu.symall.entity.CategoryVO">
+          <id column="category_id2" jdbcType="INTEGER" property="categoryId"/>
+          <result column="category_name2" jdbcType="VARCHAR" property="categoryName"/>
+          <result column="category_level2" jdbcType="INTEGER" property="categoryLevel"/>
+          <result column="parent_id2" jdbcType="INTEGER" property="parentId"/>
+          <collection property="categoryVOS" ofType="com.sjtu.symall.entity.CategoryVO">
+            <id column="category_id3" jdbcType="INTEGER" property="categoryId"/>
+            <result column="category_name3" jdbcType="VARCHAR" property="categoryName"/>
+            <result column="category_level3" jdbcType="INTEGER" property="categoryLevel"/>
+            <result column="parent_id3" jdbcType="INTEGER" property="parentId"/>
+          </collection>
+        </collection>
+    </resultMap>
+    <select id="listAllCategories" resultMap="CategoryVO">
+        SELECT c1.category_id       'category_id1',
+               c1.category_name     'category_name1',
+               c1.category_level    'category_level1',
+               c1.parent_id         'parent_id1',
+               c1.category_icon     'category_icon1',
+               c1.category_slogan   'category_slogan1',
+               c1.category_pic      'ategory_pic1',
+               c1.category_bg_color 'category_bg_color1',
+               c2.category_id       'category_id2',
+               c2.category_name     'category_name2',
+               c2.category_level    'category_level2',
+               c2.parent_id         'parent_id2',
+               c3.category_id       'category_id3',
+               c3.category_name     'category_name3',
+               c3.category_level    'category_level3',
+               c3.parent_id         'parent_id3'
+        FROM symall.category c1
+                 LEFT JOIN symall.category c2
+                           ON c2.`parent_id` = c1.`category_id`
+                 LEFT JOIN symall.category c3
+                           ON c3.`parent_id` = c2.`category_id`
+        WHERE c1.`category_level` = 1;
+    </select>
+
+
+    <resultMap id="CategoryVO2" type="com.sjtu.symall.entity.CategoryVO">
+        <id column="category_id" jdbcType="INTEGER" property="categoryId"/>
+        <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="category_level" jdbcType="INTEGER" property="categoryLevel"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="category_icon" jdbcType="VARCHAR" property="categoryIcon"/>
+        <result column="category_slogan" jdbcType="VARCHAR" property="categorySlogan"/>
+        <result column="category_pic" jdbcType="VARCHAR" property="categoryPic"/>
+        <result column="category_bg_color" jdbcType="VARCHAR" property="categoryBgColor"/>
+        <collection property="categoryVOS" column="category_id" select="com.sjtu.symall.dao.CategoryMapper.listAllCategories2"/>
+    </resultMap>
+
+    <select id="listAllCategories2" resultMap="CategoryVO2">
+        SELECT category_id,
+               category_name ,
+               category_level ,
+               parent_id,
+               category_icon ,
+               category_slogan ,
+               category_pic ,
+               category_bg_color
+        FROM symall.category
+        where parent_id=#{parentId}
+    </select>
+
+    <resultMap id="CategoryVO3" type="com.sjtu.symall.entity.CategoryVO">
+        <id column="category_id" jdbcType="INTEGER" property="categoryId"/>
+        <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="category_level" jdbcType="INTEGER" property="categoryLevel"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="category_icon" jdbcType="VARCHAR" property="categoryIcon"/>
+        <result column="category_slogan" jdbcType="VARCHAR" property="categorySlogan"/>
+        <result column="category_pic" jdbcType="VARCHAR" property="categoryPic"/>
+        <result column="category_bg_color" jdbcType="VARCHAR" property="categoryBgColor"/>
+        <collection property="categoryVOS" select="com.sjtu.symall.dao.CategoryMapper.listAllCategories2" column="category_id"></collection>
+        <collection property="products" select="com.sjtu.symall.dao.ProductMapper.selectProductByCategoryTop6" column="category_id"></collection>
+    </resultMap>
+
+    <select id="listRecommendProduct" resultMap="CategoryVO3">
+        select category_id,
+               category_name,
+               category_level,
+               parent_id,
+               category_icon,
+               category_slogan,
+               category_pic,
+               category_bg_color
+        from symall.category
+        where category_level=1
+    </select>
+</mapper>
