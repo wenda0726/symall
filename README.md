@@ -2,7 +2,7 @@
 
 ### 1.1项目主要功能实现
 
-![image-20211103113217847](https://github.com/wenda0726/symall/blob/master/img-storage/%E9%A1%B9%E7%9B%AE%E5%8A%9F%E8%83%BD.png?raw=true) 
+![image-20211103113217847](https://github.com/wenda0726/symall/blob/master/img-storage/1.png?raw=true) 
 
 ### 1.2 项目技术清单
 
